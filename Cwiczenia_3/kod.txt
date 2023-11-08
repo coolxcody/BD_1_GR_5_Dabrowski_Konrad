@@ -1,0 +1,102 @@
+1.
+CREATE DATABASE firma
+    WITH
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'C'
+    LC_CTYPE = 'C'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1
+    IS_TEMPLATE = False;
+
+2.
+CREATE SCHEMA IF NOT EXISTS rozliczenia
+    AUTHORIZATION postgres;
+
+3.
+CREATE TABLE IF NOT EXISTS rozliczenia.pracownicy
+(
+    id_pracownika integer NOT NULL DEFAULT nextval('rozliczenia.pracownicy_id_pracownika_seq'::regclass),
+    imie character varying(30) COLLATE pg_catalog."default",
+    nazwisko character varying(50) COLLATE pg_catalog."default",
+    adres character varying(100) COLLATE pg_catalog."default",
+    telefon character varying(13) COLLATE pg_catalog."default",
+    CONSTRAINT pracownicy_pkey PRIMARY KEY (id_pracownika)
+)
+
+TABLESPACE pg_default;
+
+
+
+ALTER TABLE IF EXISTS rozliczenia.pracownicy
+    OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS rozliczenia.godziny
+(
+    id_godziny integer NOT NULL DEFAULT nextval('rozliczenia.godziny_id_godziny_seq'::regclass),
+    data date,
+    liczba_godzin integer,
+    id_pracownika integer NOT NULL,
+    CONSTRAINT godziny_pkey PRIMARY KEY (id_godziny),
+    CONSTRAINT godziny_id_pracownika_fkey FOREIGN KEY (id_pracownika)
+        REFERENCES rozliczenia.pracownicy (id_pracownika) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS rozliczenia.godziny
+    OWNER to postgres;
+
+
+CREATE TABLE IF NOT EXISTS rozliczenia.pensje
+(
+    id_pensji integer NOT NULL DEFAULT nextval('rozliczenia.pensje_id_pensji_seq'::regclass),
+    stanowisko character varying(100) COLLATE pg_catalog."default",
+    kwota_brutto integer,
+    id_premii integer,
+    kwota_netto integer,
+    CONSTRAINT pensje_pkey PRIMARY KEY (id_pensji),
+    CONSTRAINT fk_id_premii FOREIGN KEY (id_premii)
+        REFERENCES rozliczenia.premie (id_premii) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS rozliczenia.pensje
+    OWNER to postgres;
+
+
+CREATE TABLE IF NOT EXISTS rozliczenia.premie
+(
+    id_premii integer NOT NULL DEFAULT nextval('rozliczenia.premie_id_premii_seq'::regclass),
+    rodzaj character varying(50) COLLATE pg_catalog."default",
+    kwota integer,
+    CONSTRAINT premie_pkey PRIMARY KEY (id_premii)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS rozliczenia.premie
+    OWNER to postgres;
+
+5.
+SELECT * FROM rozliczenia.premie
+ORDER BY id_premii ASC 
+
+6.
+SELECT
+    DATE_PART('dow', data) AS dzien,
+    DATE_PART('month', data) AS miesiac
+FROM rozliczenia.godziny;
+
+7.
+ALTER TABLE rozliczenia.pensjeRENAME COLUMN kwota TO kwota_brutto;
+
+ALTER TABLE rozliczenia.prensje ADD COLUMN kwota_netto int;
+
+UPDATE rozliczenia.pensje
+SET kwota_netto = 0.77 * kwota_brutto;
