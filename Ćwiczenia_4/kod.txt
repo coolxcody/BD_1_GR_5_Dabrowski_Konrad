@@ -1,0 +1,242 @@
+CREATE DATABASE firma2;
+
+CREATE SCHEMA ksiegowosc;
+
+CREATE TABLE ksiegowosc.pracownicy
+(
+    id_pracownika INT PRIMARY KEY,
+    imie VARCHAR(30) NOT NULL,
+    nazwisko VARCHAR(50) NOT NULL,
+    adres VARCHAR(100),
+    telefon VARCHAR(12) NOT NULL
+);
+
+CREATE TABLE ksiegowosc.godziny
+(
+    id_godziny INT PRIMARY KEY,
+    data date NOT NULL,
+    liczba_godzin INT NOT NULL,
+    id_pracownika INT NOT NULL,
+    FOREIGN KEY (id_pracownika) REFERENCES ksiegowosc.pracownicy(id_pracownika)
+);
+
+COMMENT ON TABLE ksiegowosc.pracownicy IS 'Tabela zawiera identyfikator pracownika, imie, nazwisko, adres domowy i numer telefonu.';
+COMMENT ON TABLE ksiegowosc.godziny IS 'Tabela zawiera informacje o godzinach pracy. (identyfikator godzin, date, przepracowane godziny i odwolanie do pracownika)';
+
+CREATE TABLE ksiegowosc.pensja
+(
+      id_pensji INT PRIMARY KEY,
+      stanowisko VARCHAR(50) NOT NULL,
+      kwota INT NOT NULL
+);
+
+COMMENT ON TABLE ksiegowosc.pensja IS 'Tabela zawiera informacje o pensji pracownika (identyfikator pensji, stanowisko, kwota zarobkow).';
+
+CREATE TABLE ksiegowosc.premia
+(
+      id_premii INT PRIMARY KEY,
+      rodzaj VARCHAR(30) NOT NULL,
+      kwota INT NOT NULL
+);
+
+COMMENT ON TABLE ksiegowosc.premia IS 'Tabela zawiera informacje o premii dla pracownikow (identyfikator premii, rodzaj mozliwej premii, kwota premii).';
+
+CREATE TABLE ksiegowosc.wynagrodzenie
+(
+    id_wynagrodzenia INT PRIMARY KEY,
+    data date,
+    id_pracownika INT NOT NULL,
+    id_pensji INT NOT NULL,
+    id_premii INT,
+    FOREIGN KEY (id_pracownika) REFERENCES ksiegowosc.pracownicy(id_pracownika),
+    FOREIGN KEY (id_pensji) REFERENCES ksiegowosc.pensja(id_pensji),
+    FOREIGN KEY (id_premii) REFERENCES ksiegowosc.premia(id_premii)
+);
+
+COMMENT ON TABLE ksiegowosc.wynagrodzenie IS 'Tabela zawiera informacje o wynagrodzeniu danego pracownika. (identyfikator wynagrodzenia, date oraz odwolania do konkretnego: pracownika, pensji czy premii)';
+
+
+INSERT INTO ksiegowosc.pracownicy
+VALUES
+    (1, 'Anna', 'Nowak', 'Ulica Kwiatowa 1, 00-001 Warszawa', '123-456-789'),
+    (2, 'Piotr', 'Kowalski', 'Ulica Ogrodowa 2, 00-002 Krakow', '987-654-321'),
+    (3, 'Magda', 'Kwiatkowska', 'Ulica Lesna 3, 00-003 Wroclaw', '111-222-333'),
+    (4, 'Marcin', 'Lis', 'Ulica Polna 4, 00-004 Poznan', '444-555-666'),
+    (5, 'Katarzyna', 'Kowalczyk', 'Ulica Sloneczna 5, 00-005 Gdansk', '777-888-999'),
+    (6, 'Adam', 'Mazurek', 'Ulica Wiosenna 6, 00-006 Lodz', '555-444-333'),
+    (7, 'Natalia', 'Wojcik', 'Ulica Jesienna 7, 00-007 Katowice', '222-333-444'),
+    (8, 'Karol', 'Jablonski', 'Ulica Miodowa 8, 00-008 Szczecin', '999-888-777'),
+    (9, 'Monika', 'Piotrowska', 'Ulica Zielona 9, 00-009 Lublin', '333-222-111'),
+    (10, 'Rafal', 'Szymanski', 'Ulica Zolta 10, 00-010 Bydgoszcz', '666-777-888');
+
+
+INSERT INTO ksiegowosc.godziny
+VALUES
+    (1, '2023-11-01', 8, 1),
+    (2, '2023-11-02', 7, 2),
+    (3, '2023-11-03', 9, 3),
+    (4, '2023-11-04', 6, 4),
+    (5, '2023-11-05', 8, 5),
+    (6, '2023-11-06', 7, 6),
+    (7, '2023-11-07', 9, 7),
+    (8, '2023-11-08', 6, 8),
+    (9, '2023-11-09', 8, 9),
+    (10, '2023-11-10', 7, 10);
+
+
+INSERT INTO ksiegowosc.pensja
+VALUES
+    (1, 'Ksiegowy', 5000),
+    (2, 'Specjalista ds. Finansow', 6000),
+    (3, 'Analityk Finansowy', 5500),
+    (4, 'Dyrektor Finansowy', 8000),
+    (5, 'Pracownik Obslugi Klienta', 4000),
+    (6, 'Specjalista ds. Podatkow', 6500),
+    (7, 'Audytor', 7000),
+    (8, 'Manager ds. Rachunkowosci', 7500),
+    (9, 'Asystent Ksiegowego', 4500),
+    (10, 'Analityk ds. Budzetu', 5800);
+
+
+INSERT INTO ksiegowosc.premia
+VALUES
+    (1, 'Premia roczna', 1000),
+    (2, 'Premia kwartalna', 500),
+    (3, 'Premia za wyniki', 800),
+    (4, 'Premia specjalna', 1200),
+    (5, 'Premia motywacyjna', 600),
+    (6, 'Premia swiateczna', 1000),
+    (7, 'Premia za staz', 700),
+    (8, 'Premia za dodatkowe szkolenie', 900),
+    (9, 'Premia za innowacje', 1100),
+    (10, 'Premia za efektywnosc', 750);
+
+
+INSERT INTO ksiegowosc.wynagrodzenie
+VALUES
+    (1, '2023-11-01', 1, 1, NULL),
+    (2, '2023-11-02', 2, 1, 2),
+    (3, '2023-11-03', 3, 3, NULL),
+    (4, '2023-11-04', 4, 3, 4),
+    (5, '2023-11-05', 5, 5, NULL),
+    (6, '2023-11-06', 6, 6, 6),
+    (7, '2023-11-07', 7, 7, NULL),
+    (8, '2023-11-08', 8, 8, 8),
+    (9, '2023-11-09', 9, 8, NULL),
+    (10, '2023-11-10', 10, 10, 10);
+
+-- a)
+SELECT id_pracownika, nazwisko
+FROM ksiegowosc.pracownicy;
+
+-- b) Placa wieksza niz 6000 bo mam duze wartosci
+SELECT id_pracownika
+FROM ksiegowosc.wynagrodzenie
+WHERE id_pensji IN
+(
+    SELECT id_pensji
+    FROM ksiegowosc.pensja
+    WHERE kwota > 6000
+);
+
+-- c) Placa wieksza niz 5000 bo mam duze wartosci
+SELECT id_pracownika
+FROM ksiegowosc.wynagrodzenie
+WHERE id_premii IS NULL
+AND id_pensji IN
+(
+    SELECT id_pensji
+    FROM ksiegowosc.pensja
+    WHERE kwota > 5000
+);
+
+-- d) Na litere M bo na J nikogo nie posiadam
+SELECT *
+FROM ksiegowosc.pracownicy
+WHERE imie LIKE 'M%';
+
+-- e) imie konczy sie na l
+SELECT *
+FROM ksiegowosc.pracownicy
+WHERE imie LIKE '%l' AND nazwisko LIKE '%n%';
+
+-- f) w tabeli godziny umiescilem godziny wykonane danego dnia, zatem przyjme za standarodwy czas pracy dzienny 8h
+SELECT imie, nazwisko, liczba_godzin - 8 AS nagodziny
+FROM ksiegowosc.pracownicy
+JOIN ksiegowosc.godziny ON pracownicy.id_pracownika = godziny.id_pracownika
+WHERE liczba_godzin > 8;
+
+-- g) Miedzy 4000 a 6000
+SELECT imie, nazwisko
+FROM ksiegowosc.pracownicy
+JOIN ksiegowosc.wynagrodzenie ON pracownicy.id_pracownika = wynagrodzenie.id_pracownika
+JOIN ksiegowosc.pensja ON pensja.id_pensji = wynagrodzenie.id_pensji
+WHERE pensja.kwota BETWEEN 4000 AND 6000;
+
+-- h)
+SELECT imie, nazwisko
+FROM ksiegowosc.pracownicy
+JOIN ksiegowosc.godziny ON pracownicy.id_pracownika = godziny.id_pracownika
+JOIN ksiegowosc.wynagrodzenie ON pracownicy.id_pracownika = wynagrodzenie.id_pracownika
+WHERE wynagrodzenie.id_premii IS NULL AND godziny.liczba_godzin > 8;
+
+-- i)
+SELECT imie, nazwisko, pensja.kwota
+FROM ksiegowosc.pracownicy
+JOIN ksiegowosc.wynagrodzenie ON pracownicy.id_pracownika = wynagrodzenie.id_pracownika
+JOIN ksiegowosc.pensja ON wynagrodzenie.id_pensji = pensja.id_pensji
+ORDER BY pensja.kwota;
+
+-- j)
+SELECT imie, nazwisko, pensja.kwota, premia.kwota
+FROM ksiegowosc.pracownicy
+JOIN ksiegowosc.wynagrodzenie ON pracownicy.id_pracownika = wynagrodzenie.id_pracownika
+JOIN ksiegowosc.pensja ON wynagrodzenie.id_pensji = pensja.id_pensji
+LEFT JOIN ksiegowosc.premia ON wynagrodzenie.id_premii = premia.id_premii
+ORDER BY pensja.kwota DESC, COALESCE(premia.kwota, 0) DESC;
+
+-- k)
+SELECT pensja.stanowisko, COUNT(pracownicy.id_pracownika) AS ilosc_pracownikow, STRING_AGG(pracownicy.imie || ' ' || pracownicy.nazwisko, ', ') AS pracownicy
+FROM ksiegowosc.pracownicy
+JOIN ksiegowosc.wynagrodzenie ON pracownicy.id_pracownika = wynagrodzenie.id_pracownika
+JOIN ksiegowosc.pensja ON wynagrodzenie.id_pensji = pensja.id_pensji
+GROUP BY pensja.stanowisko;
+
+-- l) policzyłem dla stanowisk analityk
+SELECT AVG(kwota), MAX(kwota), MIN(kwota)
+FROM ksiegowosc.pensja
+WHERE stanowisko LIKE 'Analityk%';
+
+-- m)
+SELECT SUM(pensja.kwota + COALESCE(premia.kwota, 0)) AS suma_premie_pensje_wszystkich_pracownikow
+FROM ksiegowosc.wynagrodzenie
+JOIN ksiegowosc.pensja ON wynagrodzenie.id_pensji = pensja.id_pensji
+LEFT JOIN ksiegowosc.premia ON wynagrodzenie.id_premii = premia.id_premii;
+
+-- n)
+SELECT pensja.stanowisko, SUM(pensja.kwota + COALESCE(premia.kwota, 0)) AS suma_premie_pensje_wg_stanowisk
+FROM ksiegowosc.wynagrodzenie
+JOIN ksiegowosc.pensja ON wynagrodzenie.id_pensji = pensja.id_pensji
+LEFT JOIN ksiegowosc.premia ON wynagrodzenie.id_premii = premia.id_premii
+GROUP BY pensja.stanowisko
+ORDER BY suma_premie_pensje_wg_stanowisk DESC;
+
+-- o)
+SELECT pensja.stanowisko, COUNT(id_premii) AS ilosc_premii
+FROM ksiegowosc.wynagrodzenie
+JOIN ksiegowosc.pensja ON wynagrodzenie.id_pensji = pensja.id_pensji
+GROUP BY pensja.stanowisko;
+
+-- p)
+DELETE FROM ksiegowosc.pracownicy
+WHERE id_pracownika IN
+(
+    SELECT id_pracownika
+    FROM ksiegowosc.wynagrodzenie
+    WHERE id_pensji IN
+    (
+        SELECT id_pensji
+        FROM ksiegowosc.pensja
+        WHERE pensja.kwota < 1200
+    )
+);
