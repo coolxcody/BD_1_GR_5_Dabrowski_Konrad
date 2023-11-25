@@ -1,0 +1,23 @@
+ZADANIE 1
+id_produktu -> nazwa_produktu, cena_produktu, VAT
+Id_produktu jednoznacznie określa nazwę produktu, cenę produktu oraz VAT.
+
+id_klienta -> nazwa_klienta
+Id_klienta jednoznacznie określa nazwę klienta.
+
+id_produktu, id_klienta, data_zamowienia -> ilość, suma_netto, suma_brutto
+Kombinacja Id_produktu, id_klienta i data_zamowienia określa jednoznacznie ilość, sumę netto i sumę brutto zamówienia.
+
+ZADANIE 2
+Klucze kandydujące:
+id_produktu
+id_klienta
+
+ZADANIE 3
+id_pomieszczenia -> id_budynku, numer_pomieszczenia, powierzchnia, liczba_okien, liczba_drzwi
+kod_pocztowy -> miasto
+id_budynku -> ulica, kod_pocztowy, miasto
+
+Klucze kandydujące:
+id_budynku
+id_pomieszczenia
