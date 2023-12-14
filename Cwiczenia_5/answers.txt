@@ -12,6 +12,9 @@ ZADANIE 2
 Klucze kandydujące:
 id_produktu
 id_klienta
+nazwa_produktu
+nazwa_klienta
+data_zamowienia
 
 ZADANIE 3
 id_pomieszczenia -> id_budynku, numer_pomieszczenia, powierzchnia, liczba_okien, liczba_drzwi
