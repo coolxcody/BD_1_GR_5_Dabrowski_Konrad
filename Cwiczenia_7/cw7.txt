@@ -1,0 +1,80 @@
+---------------
+-- ZADANIE 1 --
+---------------
+CREATE OR REPLACE FUNCTION fibonacci(f integer)
+    RETURNS SETOF integer
+    LANGUAGE SQL
+AS $$
+WITH RECURSIVE t(a, b, i) AS (
+    SELECT 0, 1, 1
+    UNION ALL
+    SELECT b, a + b, i + 1
+    FROM t
+    WHERE i < f
+)
+SELECT a FROM t;
+$$;
+
+CREATE OR REPLACE PROCEDURE print_fibonacci(n INT)
+    LANGUAGE plpgsql
+AS $$
+DECLARE
+    fibonacci_sequence INT[];
+    val INT;
+BEGIN
+    fibonacci_sequence := ARRAY(SELECT * FROM fibonacci(n));
+
+    FOR val IN SELECT * FROM UNNEST(fibonacci_sequence)
+        LOOP
+            RAISE NOTICE 'Fibonacci sequence value: %', val;
+        END LOOP;
+END;
+$$;
+
+CALL print_fibonacci(10);
+---------------
+-- ZADANIE 2 --
+---------------
+CREATE OR REPLACE FUNCTION capitalize_lastname()
+    RETURNS TRIGGER AS $$
+BEGIN
+    NEW.lastname := UPPER(person.person.lastname);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER capitalize_lastname_trigger3
+    BEFORE INSERT OR UPDATE
+    ON person.person
+    FOR EACH ROW
+EXECUTE FUNCTION capitalize_lastname();
+
+SELECT * FROM person.person;
+---------------
+-- ZADANIE 3 --
+---------------
+CREATE OR REPLACE FUNCTION tax_rate_monitoring()
+    RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS $$
+DECLARE
+    old_tax_rate numeric;
+    new_tax_rate numeric;
+BEGIN
+    -- Pobranie wartości starej i nowej stawki podatku
+    old_tax_rate := COALESCE(OLD.TaxRate, 0);
+    new_tax_rate := COALESCE(NEW.TaxRate, 0);
+
+    -- Sprawdzenie, czy zmiana przekracza 30%
+    IF ABS(new_tax_rate - old_tax_rate) / old_tax_rate > 0.3 THEN
+        RAISE EXCEPTION 'Zmiana wartości w polu TaxRate o więcej niż 30%%!';
+    END IF;
+
+    RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER tax_rate_monitoring
+    BEFORE UPDATE ON sales.salestaxrate
+    FOR EACH ROW
+EXECUTE FUNCTION tax_rate_monitoring();
