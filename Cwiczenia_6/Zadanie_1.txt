@@ -1,0 +1,36 @@
+-- a)
+UPDATE ksiegowosc.pracownicy
+SET telefon = CONCAT('(+48) ', telefon);
+
+
+-- b)
+UPDATE ksiegowosc.pracownicy
+SET telefon = CONCAT(
+        SUBSTRING(telefon FROM 1 FOR 5), ' ',
+        SUBSTRING(telefon FROM 7 FOR 3), '-',
+        SUBSTRING(telefon FROM 11 FOR 3), '-',
+        SUBSTRING(telefon FROM 15 FOR 3));
+
+-- c)
+SELECT * FROM ksiegowosc.pracownicy
+ORDER BY LENGTH(pracownicy.nazwisko) DESC
+    LIMIT 1;
+
+-- d)
+SELECT imie, nazwisko, md5(CAST(kwota AS VARCHAR)) AS zakodowana_pensja FROM ksiegowosc.pracownicy
+                                                                                 JOIN ksiegowosc.wynagrodzenie ON pracownicy.id_pracownika = wynagrodzenie.id_pracownika
+                                                                                 JOIN ksiegowosc.pensja ON wynagrodzenie.id_pensji = pensja.id_pensji;
+
+
+-- e)
+SELECT imie, nazwisko, pensja.kwota, premia.kwota FROM ksiegowosc.pracownicy
+                                                           LEFT JOIN ksiegowosc.wynagrodzenie ON pracownicy.id_pracownika = wynagrodzenie.id_pracownika
+                                                           LEFT JOIN ksiegowosc.pensja ON wynagrodzenie.id_pensji = pensja.id_pensji
+                                                           LEFT JOIN ksiegowosc.premia ON wynagrodzenie.id_premii = premia.id_premii;
+
+-- f)
+SELECT CONCAT('Pracownik ', Imie, ' ', Nazwisko, ', w dniu 7.08.2017 otrzymał pensję całkowitą na kwotę ', (pensja.kwota + COALESCE(premia.kwota, 0)), ' zł, gdzie wynagrodzenie zasadnicze wynosiło: ', pensja.kwota, ' zł, premia: ', COALESCE(premia.kwota, 0), ' zł.') AS Raport
+FROM ksiegowosc.pracownicy
+         LEFT JOIN ksiegowosc.wynagrodzenie ON pracownicy.id_pracownika = wynagrodzenie.id_pracownika
+         LEFT JOIN ksiegowosc.pensja ON wynagrodzenie.id_pensji = pensja.id_pensji
+         LEFT JOIN ksiegowosc.premia ON wynagrodzenie.id_premii = premia.id_premii;
