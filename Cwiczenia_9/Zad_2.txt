@@ -1,0 +1,22 @@
+-- a)
+BEGIN;
+UPDATE production.product
+SET listprice = product.listprice * 1.1
+WHERE product.productID = 680;
+COMMIT;
+
+-- b)
+BEGIN;
+DELETE FROM Production.Product
+WHERE ProductID = 707;
+ROLLBACK;
+
+-- c)
+BEGIN;
+INSERT INTO Production.Product (
+    Name, ProductNumber, Color, ListPrice, Weight, SellStartDate, SellEndDate,
+    SafetyStockLevel, ReorderPoint, DaysToManufacture, StandardCost)
+VALUES (
+           'Basketball', 'N12345', 'Red', 100.00, 2.5, '2024-01-21', NULL,
+           10, 5, 1, 80.00);
+COMMIT;
