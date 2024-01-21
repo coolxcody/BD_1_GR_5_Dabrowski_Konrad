@@ -1,0 +1,5 @@
+Różnice w wynikach pomiędzy dwoma przypadkami wynikają z wprowadzenia indeksów, które mają na celu przyspieszenie dostępu do danych i operacji filtrowania.
+Przed utworzeniem indeksów wykonanie zapytania było bardziej czasochłonne i kosztowne dla systemu zarządzania bazą danych (DBMS).
+Wyższy był rzeczywisty czas wykonania (11.461 ms w porównaniu do 8.707 ms).
+System musiał przejrzeć wszystkie wiersze tych tabel, co może być kosztowne, szczególnie w przypadku dużych zbiorów danych.
+Utworzenie indeksów umożliwiło wykorzystanie operacji skanowania indeksoweg, co przyspieszyło cały proces i było mniej kosztowne.
